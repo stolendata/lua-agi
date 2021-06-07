@@ -137,7 +137,7 @@ end
 -- sends text to channels supporting MESSAGE requests
 --
 function m.send_text( text )
-    if( text or '' ) == '' then return end
+    if ( text or '' ) == '' then return end
     return command( 'SEND TEXT', 1, '"' .. text .. '"' )
 end
 
