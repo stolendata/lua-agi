@@ -57,7 +57,7 @@ end
 
 -- sets current channel's caller ID (CNID)
 --
-function m.set_caller_id( number )
+function m.set_callerid( number )
     if ( number or '' ) == '' then return end
     command( 'SET CALLERID', nil, number )
 end
