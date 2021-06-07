@@ -95,6 +95,12 @@ function m.hangup( channel )
     command( 'HANGUP', nil, channel )
 end
 
+-- functionally similar to VERBOSE with level 0
+--
+function m.noop( message )
+    command( 'NOOP', nil, message )
+end
+
 -- returns status of current or specified channel
 --
 function m.channel_status( channel )
