@@ -168,4 +168,13 @@ function m.wait_for_digit( timeout )
     return command( 'WAIT FOR DIGIT', 1, timeout or -1 )
 end
 
+-- gosub( <context>, <extension>, <priority>[, <optional argument>] )
+--
+function m.gosub( context, exten, prio, arg )
+    if ( ((context or '') == '')
+         or ((exten or '') == '')
+         or ((prio or '') == '') ) then return end
+    command( 'GOSUB', nil, context, exten, prio, arg )
+end
+
 return m
