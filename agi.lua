@@ -162,4 +162,10 @@ function m.get_data( audio_file, timeout, max_digits )
     return command( 'GET DATA', 2, audio_file, timeout, max_digits )
 end
 
+-- waits for a DTMF digit with timeout
+--
+function m.wait_for_digit( timeout )
+    return command( 'WAIT FOR DIGIT', 1, timeout or -1 )
+end
+
 return m
