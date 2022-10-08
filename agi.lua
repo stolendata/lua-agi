@@ -21,7 +21,8 @@ io.stderr:setvbuf 'line'
 --
 local function command( cmd, parse_mode, ... )
     local args = { ... }
-    if select( '#', args ) > 0 then table.insert( args, 1, '' ) end -- urgh
+    -- urgh
+    if select( '#', args ) > 0 then table.insert( args, 1, '' ) end
     io.write( cmd, table.concat(args, ' '), "\n" )
     local resp = io.read()
     if parse_mode == nil then return
@@ -33,10 +34,27 @@ local function command( cmd, parse_mode, ... )
     elseif parse_mode == 2 then return resp end
 end
 
--- writes message to the Asterisk console
+-- prints message on the Asterisk console
 --
 function m.debug( message )
     io.stderr:write( message, "\n" )
+end
+
+-- populates the referenced table with all AGI-related channel variables
+--
+function m.read_channel( table )
+    for line in io.lines() do
+        if line == '' then break end
+        local k, v = line:match( '^agi_(%a+):%s(.*)' )
+        if k ~= nil then table[k] = v end
+    end
+end
+
+-- executes an Application with options and return passthrough
+--
+function m.exec( application, ... )
+    if ( application or '' ) == '' then return end
+    return command( 'EXEC', 2, ... )
 end
 
 -- streams audio file
@@ -51,6 +69,7 @@ end
 --
 function m.get_option( audio_file, escape_digits, timeout )
     if ( audio_file or '' ) == '' then return end
+    if ( escape_digits or '' ) == '' then escape_digits = '""' end
     if ( timeout or '' ) == '' then timeout = 0 end
     return command( 'GET OPTION', 1, audio_file, escape_digits, timeout )
 end
@@ -107,16 +126,6 @@ function m.channel_status( channel )
     return command( 'CHANNEL STATUS', 1, channel )
 end
 
--- populates the referenced table with all AGI-related channel variables
---
-function m.read_channel( table )
-    for line in io.lines() do
-        if line == '' then break end
-        local k, v = line:match( '^agi_(%a+):%s(.*)' )
-        if k ~= nil then table[k] = v end
-    end
-end
-
 -- verbose( [<level>,] <message> )
 --
 function m.verbose( ... )
@@ -124,14 +133,6 @@ function m.verbose( ... )
     if select( '#', ... ) == 1 then message, level = level, 0 end
     if ( message or '' ) == '' then return end
     command( 'VERBOSE', nil, '"' .. message .. '"', level )
-end
-
--- get_variable( <name> )
---
-function m.get_variable( name )
-    if ( name or '' ) == '' then return end
-    local result, value = command( 'GET VARIABLE', 1, name )
-    if result == 1 then return value end
 end
 
 -- sends text to channels supporting MESSAGE requests
@@ -144,8 +145,16 @@ end
 -- waits for incoming MESSAGE request with timeout
 --
 function m.receive_text( timeout )
-    local resp, text = command( 'RECEIVE TEXT', 1, timeout or 0 )
-    if resp == 1 then return text end
+    local res, text = command( 'RECEIVE TEXT', 1, timeout or 0 )
+    if res == 1 then return text end
+end
+
+-- get_variable( <name> )
+--
+function m.get_variable( name )
+    if ( name or '' ) == '' then return end
+    local res, value = command( 'GET VARIABLE', 1, name )
+    if result == 1 then return value end
 end
 
 -- set_variable( <name>, <value> )
@@ -155,7 +164,7 @@ function m.set_variable( name, value )
     command( 'SET VARIABLE', nil, name, value or '' )
 end
 
--- get_data( <audio filename>, <timeout>, <max digits> )
+-- plays audio file and waits for one or more DTMF digits with timeout
 --
 function m.get_data( audio_file, timeout, max_digits )
     if ( audio_file or '' ) == '' then return end
@@ -171,10 +180,41 @@ end
 -- gosub( <context>, <extension>, <priority>[, <optional argument>] )
 --
 function m.gosub( context, exten, prio, arg )
-    if ( ((context or '') == '')
-         or ((exten or '') == '')
-         or ((prio or '') == '') ) then return end
+    if ( (context or '') == ''
+         or (exten or '') == ''
+         or (prio or '') == '' ) then return end
     command( 'GOSUB', nil, context, exten, prio, arg )
+end
+
+-- gets value of a key in Asterisk's internal DB
+--
+function m.database_get( family, key )
+    if ( (family or '') == '' or (key or '') == '' ) then return end
+    local res, value = command( 'DATABASE GET', 1, family, key )
+    if result == 1 then return value end
+end
+
+-- creates (or updates value of) a key in Asterisk's internal DB
+--
+function m.database_put( family, key, value )
+    if ( (family or '') == ''
+         or (key or '') == ''
+         or (value or '') == '' ) then return end
+    return command( 'DATABASE PUT', 2, family, key, value )
+end
+
+-- deletes key from Asterisk's internal DB
+--
+function m.database_del( family, key )
+    if ( (family or '') == '' or (key or '') == '' ) then return end
+    return command( 'DATABASE DEL', 2, family, key )
+end
+
+-- deletes family or specific tree of keys from Asterisk's internal DB
+--
+function m.database_deltree( family, tree )
+    if ( family or '' ) == '' then return end
+    return command( 'DATABASE DELTREE', 2, family, tree )
 end
 
 return m
