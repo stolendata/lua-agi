@@ -157,6 +157,14 @@ function m.get_variable( name )
     if result == 1 then return value end
 end
 
+-- evaluates expression on current or specified channel and returns result
+--
+function m.get_full_variable( expr, chan )
+    if ( expr or '' ) == '' then return end
+    local result, value = command( 'GET FULL VARIABLE', 1, expr, chan )
+    if result == 1 then return value end
+end
+
 -- set_variable( <name>, <value> )
 --
 function m.set_variable( name, value )
