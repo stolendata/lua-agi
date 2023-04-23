@@ -145,15 +145,15 @@ end
 -- waits for incoming MESSAGE request with timeout
 --
 function m.receive_text( timeout )
-    local res, text = command( 'RECEIVE TEXT', 1, timeout or 0 )
-    if res == 1 then return text end
+    local result, text = command( 'RECEIVE TEXT', 1, timeout or 0 )
+    if result == 1 then return text end
 end
 
 -- get_variable( <name> )
 --
 function m.get_variable( name )
     if ( name or '' ) == '' then return end
-    local res, value = command( 'GET VARIABLE', 1, name )
+    local result, value = command( 'GET VARIABLE', 1, name )
     if result == 1 then return value end
 end
 
@@ -198,7 +198,7 @@ end
 --
 function m.database_get( family, key )
     if ( (family or '') == '' or (key or '') == '' ) then return end
-    local res, value = command( 'DATABASE GET', 1, family, key )
+    local result, value = command( 'DATABASE GET', 1, family, key )
     if result == 1 then return value end
 end
 
