@@ -114,6 +114,13 @@ function m.hangup( channel )
     command( 'HANGUP', nil, channel )
 end
 
+-- automatically hangs up current channel with delay
+--
+function m.set_autohangup( seconds )
+    if ( seconds or '' ) == '' then return end
+    command( 'SET AUTOHANGUP', nil, seconds )
+end
+
 -- functionally similar to VERBOSE with level 0
 --
 function m.noop( message )
