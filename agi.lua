@@ -37,7 +37,7 @@ end
 -- prints message on the Asterisk console
 --
 function m.debug( message )
-    io.stderr:write( message, "\n" )
+    io.stderr:write( message or '', "\n" )
 end
 
 -- populates the referenced table with all AGI-related channel variables
