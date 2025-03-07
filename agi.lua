@@ -124,6 +124,7 @@ end
 -- functionally similar to VERBOSE with level 0
 --
 function m.noop( message )
+    if ( message or '' ) == '' then return end
     command( 'NOOP', nil, message )
 end
 
