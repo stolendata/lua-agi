@@ -16,14 +16,15 @@ Usage example
 
 agi = require 'agi'
 
-chan_vars = {}
-agi.read_channel( chan_vars )
+agi.debug( 'This message appears only on the Asterisk console' )
 
-for k, v in pairs( chan_vars ) do
+-- do some things with the AGI environment variables
+
+agi.verbose( 'You are running Asterisk ' .. agi.env['version'] )
+
+for k, v in pairs( agi.env ) do
     agi.verbose( k .. ' -> ' .. v )
 end
-
-agi.debug( 'This message appears only on the Asterisk console' )
 ```
 
 

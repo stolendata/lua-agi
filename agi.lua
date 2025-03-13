@@ -11,11 +11,19 @@
 
 --]]
 
-local m = {}
+local m = { ['env'] = {} }
 
 io.stdin:setvbuf 'line'
 io.stdout:setvbuf 'line'
 io.stderr:setvbuf 'line'
+
+-- prefetch channel's AGI environment variables into agi.env
+--
+for line in io.lines() do
+    if line == '' then break end
+    local k, v = line:match( '^agi_(%a+):%s(.*)' )
+    if k ~= nil then m.env[k] = v end
+end
 
 -- this is dirty
 --
@@ -38,16 +46,6 @@ end
 --
 function m.debug( message )
     io.stderr:write( message or '', "\n" )
-end
-
--- populates the referenced table with all AGI-related channel variables
---
-function m.read_channel( table )
-    for line in io.lines() do
-        if line == '' then break end
-        local k, v = line:match( '^agi_(%a+):%s(.*)' )
-        if k ~= nil then table[k] = v end
-    end
 end
 
 -- executes an Application with options and return passthrough
