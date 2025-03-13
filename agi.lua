@@ -152,7 +152,7 @@ end
 --
 function m.receive_text( timeout )
     local result, text = command( 'RECEIVE TEXT', 1, timeout or 0 )
-    if result == 1 then return text end
+    if result == '1' then return text end
 end
 
 -- get_variable( <name> )
@@ -160,7 +160,7 @@ end
 function m.get_variable( name )
     if ( name or '' ) == '' then return end
     local result, value = command( 'GET VARIABLE', 1, name )
-    if result == 1 then return value end
+    if result == '1' then return value end
 end
 
 -- evaluates expression on current or specified channel and returns result
@@ -168,7 +168,7 @@ end
 function m.get_full_variable( expr, chan )
     if ( expr or '' ) == '' then return end
     local result, value = command( 'GET FULL VARIABLE', 1, expr, chan )
-    if result == 1 then return value end
+    if result == '1' then return value end
 end
 
 -- set_variable( <name>, <value> )
@@ -205,7 +205,7 @@ end
 function m.database_get( family, key )
     if ( (family or '') == '' or (key or '') == '' ) then return end
     local result, value = command( 'DATABASE GET', 1, family, key )
-    if result == 1 then return value end
+    if result == '1' then return value end
 end
 
 -- creates (or updates value of) a key in Asterisk's internal DB
