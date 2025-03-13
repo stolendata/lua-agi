@@ -1,6 +1,6 @@
 --[[
 
-  Asterisk AGI helper v0.1
+  Asterisk AGI helper v0.2
 
   by Robin Leffmann <djinn [at] stolendata.net>
 
