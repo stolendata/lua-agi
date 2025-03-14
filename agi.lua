@@ -21,7 +21,7 @@ io.stderr:setvbuf 'line'
 --
 for line in io.lines() do
     if line == '' then break end
-    local k, v = line:match( '^agi_(%a+):%s(.*)' )
+    local k, v = line:match( '^agi_(%a+): (.*)' )
     if k ~= nil then m.env[k] = v end
 end
 
